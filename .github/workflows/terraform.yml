@@ -31,7 +31,7 @@ jobs:
         run: terraform plan -out=tfplan
 
       - name: Save plan locally
-        run: cp tfplan /home/runner/_work/terraform-plan
+        run: cp tfplan /mnt/c/Users/viqi.agung.AKULAKUFINANCE/project/IAC/gitops/gitops-iac/
 
   terraform-apply:
     name: Terraform Apply
