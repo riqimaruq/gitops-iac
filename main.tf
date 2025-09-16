@@ -31,7 +31,6 @@ resource "docker_container" "backend" {
 
   # penting: supaya kalau ada container lama dengan nama sama,
   # langsung dihentikan & dihapus oleh Terraform
-  force_remove = true
 
   # opsional: selalu buat ulang container kalau image berubah
   lifecycle {
