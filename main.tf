@@ -9,9 +9,10 @@ terraform {
 
 provider "docker" {}
 
-# Pull image backend (contoh pakai image golang echo server)
+# Pull image backend
 resource "docker_image" "backend" {
-  name = "hashicorp/http-echo:latest"
+  name         = "hashicorp/http-echo:latest"
+  keep_locally = false # otomatis hapus image lama kalau tidak dipakai
 }
 
 # Run container backend
@@ -27,4 +28,13 @@ resource "docker_container" "backend" {
   command = [
     "-text=Hello from Terraform GitOps Backend pake runner!"
   ]
+
+  # penting: supaya kalau ada container lama dengan nama sama,
+  # langsung dihentikan & dihapus oleh Terraform
+  force_remove = true
+
+  # opsional: selalu buat ulang container kalau image berubah
+  lifecycle {
+    replace_triggered_by = [docker_image.backend]
+  }
 }
