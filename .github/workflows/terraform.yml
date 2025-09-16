@@ -30,9 +30,6 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      - name: Save plan locally
-        run: cp tfplan /mnt/c/Users/viqi.agung.AKULAKUFINANCE/project/IAC/gitops/gitops-iac/
-
   terraform-apply:
     name: Terraform Apply
     needs: terraform-plan
@@ -50,12 +47,6 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-
-      - name: Download Plan Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: terraform-plan
-          path: .
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
