@@ -1,29 +1,52 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
   terraform-plan:
+    name: Terraform Plan
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.8
-      - run: terraform init
-      - run: terraform validate
-      - run: terraform fmt -check -recursive
-      - run: terraform plan -out=tfplan
-      - uses: actions/upload-artifact@v4
-        with:
-          name: tfplan
-          path: tfplan
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Plan
+        run: terraform plan
 
   terraform-apply:
+    name: Terraform Apply
     needs: terraform-plan
     runs-on: self-hosted
+    environment:
+      name: production   # butuh approval manual di GitHub
     steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.8
-      - run: terraform init
-      - uses: actions/download-artifact@v4
-        with:
-          name: tfplan
-      - run: terraform apply -auto-approve tfplan
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
