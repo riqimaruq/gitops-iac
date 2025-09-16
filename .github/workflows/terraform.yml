@@ -1,22 +1,65 @@
-name: Terraform CI
+name: Terraform CI/CD
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch: # biar bisa jalan manual juga
+    branches: ["main"]
+  pull_request:
 
 jobs:
-  terraform:
+  terraform-plan:
+    name: Terraform Plan
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8 # sesuaikan versimu
+
       - name: Terraform Init
         run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -out=tfplan
+
+      - name: Upload Plan as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: tfplan
+
+  terraform-apply:
+    name: Terraform Apply
+    needs: terraform-plan
+    runs-on: self-hosted
+    environment:
+      name: production   # butuh manual approval di GitHub Environments
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-plan
+          path: .
+
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve tfplan
 
