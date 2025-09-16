@@ -17,15 +17,16 @@ resource "docker_image" "backend" {
 
 # Run container backend
 resource "docker_container" "backend" {
-  name  = "backend-app"
-  image = docker_image.backend.name
-  must_run     = true
+  name           = "backend-app"
+  image          = docker_image.backend.name
+  must_run       = true
   remove_volumes = true
-  restart      = "no"
+  restart        = "no"
 
   lifecycle {
     replace_triggered_by = [docker_image.backend]
   }
+
   ports {
     internal = 5678
     external = 8083
@@ -34,8 +35,4 @@ resource "docker_container" "backend" {
   command = [
     "-text=Hello from Terraform GitOps Backend pake runner!"
   ]
-
-  # penting: supaya kalau ada container lama dengan nama sama,
-  # langsung dihentikan & dihapus oleh Terraform
-
-  # opsional: selalu buat ulang container kalau image berubah
+}
