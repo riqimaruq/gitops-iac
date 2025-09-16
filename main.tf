@@ -25,6 +25,6 @@ resource "docker_container" "backend" {
   }
 
   command = [
-    "-text=Hello from Terraform GitOps Backend!"
+    "-text=Hello from Terraform GitOps Backend pake runner!"
   ]
 }
