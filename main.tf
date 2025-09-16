@@ -19,7 +19,13 @@ resource "docker_image" "backend" {
 resource "docker_container" "backend" {
   name  = "backend-app"
   image = docker_image.backend.name
+  must_run     = true
+  remove_volumes = true
+  restart      = "no"
 
+  lifecycle {
+    replace_triggered_by = [docker_image.backend]
+  }
   ports {
     internal = 5678
     external = 8083
@@ -33,7 +39,3 @@ resource "docker_container" "backend" {
   # langsung dihentikan & dihapus oleh Terraform
 
   # opsional: selalu buat ulang container kalau image berubah
-  lifecycle {
-    replace_triggered_by = [docker_image.backend]
-  }
-}
