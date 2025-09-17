@@ -46,7 +46,7 @@ resource "kubernetes_deployment" "backend" {
           name  = "backend"
           image = "hashicorp/http-echo:latest"
           args  = [
-            "-text=Hello from Backend on K8s via Terraform!"
+            "-text=Hello from Backend on K8s via Terraform!",
             "-listen=:8084"
           ]
           port {
