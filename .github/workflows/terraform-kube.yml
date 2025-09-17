@@ -29,6 +29,15 @@ jobs:
           terraform state list | grep kubernetes_namespace.backend || \
           terraform import kubernetes_namespace.backend backend-app
 
+      - name: Terraform Import Deployment & Service
+        working-directory: ./kube
+        run: |
+          terraform state list | grep kubernetes_deployment.backend || \
+          terraform import kubernetes_deployment.backend backend-app/backend-deployment
+
+          terraform state list | grep kubernetes_service.backend || \
+          terraform import kubernetes_service.backend backend-app/backend-service
+
       - name: Terraform Plan
         working-directory: ./kube
         run: terraform plan
