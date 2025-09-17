@@ -1,29 +1,15 @@
-terraform {
-  required_providers {
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~> 2.30.0"
-    }
-  }
-}
-
 provider "kubernetes" {
-  config_path = "~/.kube/config"  # atau pakai env var KUBECONFIG
+  config_path = "~/.kube/config"
 }
 
-# Namespace untuk backend
+# Namespace
 resource "kubernetes_namespace" "backend" {
   metadata {
     name = "backend-app"
   }
-
-  lifecycle {
-    prevent_destroy = false
-    ignore_changes  = [metadata]
-  }
 }
 
-# Deployment backend sederhana
+# Deployment
 resource "kubernetes_deployment" "backend" {
   metadata {
     name      = "backend-deployment"
@@ -35,27 +21,27 @@ resource "kubernetes_deployment" "backend" {
 
   spec {
     replicas = 1
+
     selector {
       match_labels = {
         app = "backend"
       }
     }
+
     template {
       metadata {
         labels = {
           app = "backend"
         }
       }
+
       spec {
         container {
           name  = "backend"
-          image = "hashicorp/http-echo:latest"
-          args  = [
-            "-text=Hello from Backend on K8s via Terraform!",
-            "-listen=:8084"
-          ]
+          image = "nginx:latest" # ganti dengan image aplikasi kamu
+
           port {
-            container_port = 8084
+            container_port = 8080
           }
         }
       }
@@ -63,7 +49,7 @@ resource "kubernetes_deployment" "backend" {
   }
 }
 
-# Service untuk expose backend di port 8084
+# Service (NodePort)
 resource "kubernetes_service" "backend" {
   metadata {
     name      = "backend-service"
@@ -76,14 +62,11 @@ resource "kubernetes_service" "backend" {
     }
 
     port {
-      port        = 8084
-      target_port = 8084
+      port        = 8080   # service port
+      target_port = 8080   # container port
+      node_port   = 30084  # port di node
     }
 
     type = "NodePort"
   }
-}
-
-output "backend_service_url" {
-  value = "http://localhost:8084"
 }
