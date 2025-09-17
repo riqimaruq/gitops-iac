@@ -22,6 +22,14 @@ jobs:
         working-directory: ./kube
         run: terraform init
 
+      # Optional: Import namespace jika sudah ada
+      - name: Terraform Import Namespace
+        working-directory: ./kube
+        run: |
+          set -e
+          terraform state show kubernetes_namespace.backend || \
+          terraform import kubernetes_namespace.backend backend-app
+
       - name: Terraform Plan
         working-directory: ./kube
         run: terraform plan

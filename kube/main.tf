@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "kubernetes" {
-  config_path = "~/.kube/config" # atau pakai env var KUBECONFIG
+  config_path = "~/.kube/config"  # atau pakai env var KUBECONFIG
 }
 
 # Namespace untuk backend
@@ -16,7 +16,7 @@ resource "kubernetes_namespace" "backend" {
   metadata {
     name = "backend-app"
   }
-  
+
   lifecycle {
     prevent_destroy = false
     ignore_changes  = [metadata]
