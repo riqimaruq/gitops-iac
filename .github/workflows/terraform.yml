@@ -48,5 +48,10 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Cleanup existing container
+        run: |
+          docker ps -a --filter "name=backend-app" --format "{{.ID}}" | xargs -r docker rm -f
+
+
       - name: Terraform Apply
         run: terraform apply -auto-approve
