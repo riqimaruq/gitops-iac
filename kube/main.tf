@@ -16,9 +16,8 @@ resource "kubernetes_namespace" "backend" {
   metadata {
     name = "backend-app"
   }
-}
-
- lifecycle {
+  
+  lifecycle {
     prevent_destroy = false
     ignore_changes  = [metadata]
   }
