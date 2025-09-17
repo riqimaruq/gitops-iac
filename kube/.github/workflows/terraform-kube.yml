@@ -3,6 +3,8 @@ name: Terraform Kubernetes
 on:
   push:
     branches: ["kube"]
+env:
+  KUBECONFIG: /home/viqiagung/.kube/config
 
 jobs:
   terraform:
