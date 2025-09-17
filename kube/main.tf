@@ -18,6 +18,12 @@ resource "kubernetes_namespace" "backend" {
   }
 }
 
+ lifecycle {
+    prevent_destroy = false
+    ignore_changes  = [metadata]
+  }
+}
+
 # Deployment backend sederhana
 resource "kubernetes_deployment" "backend" {
   metadata {
